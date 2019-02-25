@@ -2,6 +2,15 @@ import random
 import pygame
 
 
+RED = (255,0,0)
+GREEN = (0,255,0)
+BLUE = (0,0,255)
+MAGENTA = (169,0,255)
+CYAN = (255,255,0)
+SAND_COLORS = RED, GREEN, BLUE, MAGENTA
+FALL_DIR = {RED: (0, -1), BLUE: (0, 1), GREEN: (1, 0), MAGENTA: (-1, 0), CYAN: (1, -1)}
+
+
 class Particle:
     def __init__(self, pos, color, surface):
         self.x = pos[0]
@@ -12,10 +21,15 @@ class Particle:
         self.surface = surface
 
     def fall(self):
-        # fall
-        if (self.y + 1 < self.surface.get_height() and  # in bounds
-            self.surface.get_at((self.x, self.y + 1)) == (0,0,0,255)):  # alpha
-            self.y += 1
+        # fall based on gravity direction of this particle's color
+        dx, dy = FALL_DIR[self.color]
+        x = self.x + dx
+        y = self.y + dy
+        if (0 < x < self.surface.get_width() and  # in bounds
+            0 < y < self.surface.get_height() and  # in bounds
+            self.surface.get_at((x, y)) == (0,0,0,255)):  # alpha
+            self.x = x
+            self.y = y
 
         # jiggle?
         if self.drift:

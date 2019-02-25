@@ -21,6 +21,7 @@ GRAY = (64,64,64)
 LIGHT_GRAY = (128,128,128)
 COLORS = RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, MAGENTA, PINK
 WALL_COLOR = BLUE
+SAND_COLORS = RED, GREEN, BLUE, MAGENTA, CYAN
 SAND_COLOR = GREEN
 BG_COLOR = BLACK
 
@@ -36,7 +37,7 @@ def game():
     pygame.display.update()
 
     walls = []
-    sands = []
+    sands = []  # list of Particle objects
     drawing = False
     color = BLUE
 
@@ -60,9 +61,15 @@ def game():
             # keyboard events
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    color = random.choice(COLORS)
+                    color = random.choice(SAND_COLORS)
                 if event.key == pygame.K_LEFT:
                     color = SAND_COLOR if color == WALL_COLOR else WALL_COLOR
+
+        # randomly generate sand
+        for _ in range(10):
+            random_x = random.randint(0, width)  # - int(width/2)
+            random_y = random.randint(0, height)  # - int(height/2)
+            sands.append(Particle((random_x, random_y), color, screen))
 
         # background
         screen.fill(BG_COLOR)
