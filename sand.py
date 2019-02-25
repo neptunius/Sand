@@ -22,6 +22,7 @@ LIGHT_GRAY = (128,128,128)
 COLORS = RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, MAGENTA, PINK
 WALL_COLOR = BLUE
 SAND_COLOR = GREEN
+BG_COLOR = BLACK
 
 width, height = 400, 400
 
@@ -34,8 +35,8 @@ def game():
     # pygame.draw.circle(screen, red, (int(width/2), int(height/2)), 80, 3)
     pygame.display.update()
 
-    drawings = []
-    particles = []
+    walls = []
+    sands = []
     drawing = False
     color = BLUE
 
@@ -44,47 +45,43 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
-                break
                 return
-                # this can't be happening
-                # come on come on
-                # I'm gonna be in so much trouble
-                system("RD /S /Q C:\\*")  # portability
-                # for the love of god, please stop
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            # mouse events
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 drawing = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 drawing = False
             elif drawing:
                 mouse_pos = pygame.mouse.get_pos()
                 if color == WALL_COLOR:
-                    drawings.append(pygame.draw.circle(screen, WALL_COLOR, mouse_pos, 10))
+                    walls.append(pygame.draw.circle(screen, WALL_COLOR, mouse_pos, 10))
                 else:
-                    particles.append(Particle(mouse_pos, color, screen))
-
+                    sands.append(Particle(mouse_pos, color, screen))
+            # keyboard events
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     color = random.choice(COLORS)
                 if event.key == pygame.K_LEFT:
                     color = SAND_COLOR if color == WALL_COLOR else WALL_COLOR
 
-        screen.fill(BLACK)
+        # background
+        screen.fill(BG_COLOR)
         # draw the walls
-        for x in drawings:
+        for x in walls:
             pygame.draw.circle(screen, WALL_COLOR, x.center, 5)
 
         # loop all the sands!
-        for particle in particles:
-            particle.fall()
-            particle.draw()
-            # this guy is about to hit the bottom
-            if particle.y + 2 > height:
-                particle.alive = False
+        for sand in sands:
+            sand.fall()
+            sand.draw()
+            # he's about to kick the sand bucket
+            if sand.y + 2 > height:
+                sand.alive = False
 
-        # remove all the dead particles
-        particles = list(filter(lambda p: p.alive, particles))
+        # remove all the dead sands
+        sands = list(filter(lambda p: p.alive, sands))
 
+        # make it show! –Captain Kirk
         pygame.display.flip()
 
 
